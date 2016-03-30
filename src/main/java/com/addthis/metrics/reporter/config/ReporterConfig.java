@@ -46,12 +46,18 @@ public class ReporterConfig
 
     @Valid
     private List<ConsoleReporterConfig> console;
+
     @Valid
     private List<CsvReporterConfig> csv;
+
     @Valid
     private List<GangliaReporterConfig> ganglia;
+
     @Valid
     private List<GraphiteReporterConfig> graphite;
+
+    @Valid
+    private List<DatadogReporterConfig> datadog;
 
     public List<ConsoleReporterConfig> getConsole()
     {
@@ -95,6 +101,13 @@ public class ReporterConfig
         this.graphite = graphite;
     }
 
+    public List<DatadogReporterConfig> getDatadog() {
+        return datadog;
+    }
+
+    public void setDatadog(List<DatadogReporterConfig> datadog) {
+        this.datadog = datadog;
+    }
 
     public boolean enableConsole()
     {
@@ -168,6 +181,19 @@ public class ReporterConfig
         return !failures;
     }
 
+    public boolean enableDatadog() {
+        boolean failures = false;
+        if (datadog == null) {
+            log.debug("Asked to enable datadog, but it was not configured");
+            return false;
+        }
+        for (DatadogReporterConfig datadogConfig : datadog) {
+            if (!datadogConfig.enable()) {
+                failures = true;
+            }
+        }
+        return !failures;
+    }
 
     public boolean enableAll()
     {
@@ -200,6 +226,11 @@ public class ReporterConfig
                 enabled = true;
             }
         }
+		if (datadog != null) {
+			if (enableDatadog()) {
+				enabled = true;
+			}
+		}
         if (!enabled)
         {
             log.warn("No reporters were succesfully enabled");

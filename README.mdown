@@ -1,3 +1,9 @@
+## SmartThings Additions
+
+The smarthings-2.1.0.x branch is used to modify this library in a way so that we can
+replace the version of it in the cassandra classpath and then leverage our
+cassandra-datadog.
+
 ## Description
 
 Coda Hale's [Metrics](http://github.com/codahale/metrics) package

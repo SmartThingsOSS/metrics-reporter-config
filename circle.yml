@@ -1,0 +1,21 @@
+machine:
+  java:
+    version:
+      oraclejdk7
+
+dependencies:
+  override:
+  - ./mvnw clean
+
+test:
+  override:
+  - ./mvnw package
+
+  post:
+  - 'find . -type f -name "*.xml" | grep "target/surefire-reports" | xargs cp -t $CIRCLE_TEST_REPORTS/'
+
+deployment:
+  snapshot:
+    branch: smartthings-2.1.0.x
+    commands:
+    - aws s3 cp target/reporter-config-$(xmllint --xpath '//project/version/text()' pom.xml).jar s3://smartthings-provisioning/packages/reporter-config/${CIRCLE_BRANCH}/reporter-config-$(xmllint --xpath '//project/version/text()' pom.xml).jar
